@@ -1,31 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.6;
 
-
 contract GameWager {
+    enum State {
+        Created,
+        Accepted,
+        Finished
+    }
 
-    enum State { Created, Accepted, Finished }
-    
     struct Wager {
-        uint id;
+        uint256 id;
         address owner;
-        uint ownerWagerAmount;
+        uint256 ownerWagerAmount;
         address player2;
-        uint player2WagerAmount;
+        uint256 player2WagerAmount;
         State state;
     }
 
-    mapping (uint => Wager) wagers;
-    mapping (uint => bool) wagerIDs;
+    mapping(uint256 => Wager) public wagers;
+    mapping(uint256 => bool) wagerIDs;
 
     event WagerCreated(Wager wager);
     event WagerAccepted(Wager wager);
     event WagerFinished(Wager wager);
 
-    function createWager(uint wagerID) external payable {
+    function createWager(uint256 wagerID) external payable {
         require(wagerIDs[wagerID] == false);
+        require(msg.value > 0);
 
-        Wager memory wager = Wager ({
+        Wager memory wager = Wager({
             id: wagerID,
             owner: msg.sender,
             ownerWagerAmount: msg.value,
@@ -39,11 +42,13 @@ contract GameWager {
         emit WagerCreated(wager);
     }
 
-    function AcceptWager(uint wagerID) external payable {
+    function AcceptWager(uint256 wagerID) external payable {
         require(wagerIDs[wagerID] == true);
         Wager memory wager = wagers[wagerID];
 
-        require(wager.state == State.Created && wager.ownerWagerAmount == msg.value);
+        require(
+            wager.state == State.Created && wager.ownerWagerAmount == msg.value
+        );
 
         wager.player2 = msg.sender;
         wager.player2WagerAmount = msg.value;
@@ -53,7 +58,7 @@ contract GameWager {
         emit WagerAccepted(wager);
     }
 
-    function PayoutWager(uint wagerID, address winner) external {
+    function PayoutWager(uint256 wagerID, address winner) external {
         require(wagerIDs[wagerID] == true);
         Wager memory wager = wagers[wagerID];
 
@@ -67,5 +72,4 @@ contract GameWager {
 
         emit WagerFinished(wager);
     }
-
 }
