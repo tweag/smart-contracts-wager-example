@@ -48,17 +48,30 @@ This section should list any major frameworks/libraries used to bootstrap your p
 
 ## Getting Started
 
-### Prerequisites
+### Automatic Setup with `asdf`
 
-1. Install [Brownie](https://github.com/eth-brownie/brownie#installation)
-2. Install [Node.js >= v10.13.0](https://nodejs.org/en/about/releases/) and npm >= 6.4.1.
-3. Install [Gananche-cli 6.12.2](https://github.com/trufflesuite/ganache#command-line-use)
-   ```
-   npm install ganache@6.12.2 --global
-   ```
-   Note: In order to work with the current version (As of 10/8/2021) you may have to rename your binary file for `ganache` to `ganache` from `ganache- cli`
+If you're using [asdf](https://asdf-vm.com/), run `bin/setup` to get set up.
 
-### Installation
+Notes about the setup:
+
+- `asdf` is used to install compatible versions of Python and Node.js, respectively, as well as to isolate dependencies to some degree.
+- [Poetry](https://python-poetry.org/) is used for python dependencies, including Brownie. Poetry sets up and uses a virtual environment automatically, as well as pinning dependency versions.
+
+### Manual setup
+
+1. Python 3.9
+  (Brownie doesn't work with 3.10 as of 2021-10-08)
+
+2. [Brownie](https://github.com/eth-brownie/brownie#installation)
+  Via [Poetry](https://python-poetry.org/): `poetry install`
+  Via `pip`: `pip install brownie`
+  Via [pipx](https://pypa.github.io/pipx/): `pipx install brownie`
+
+3. [Node.js >= v10.13.0](https://nodejs.org/en/about/releases/) and npm >= 6.4.1
+
+4. [Gananche-cli 6.12.2](https://github.com/trufflesuite/ganache#command-line-use)
+  `npm install ganache-cli --global`
+  (Brownie needs `ganache-cli` to be in the path)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -81,7 +94,7 @@ sequenceDiagram
     participant chess as ♟ <br><br> Lichess.org API
     participant contract as ⛓ <br><br> Smart Contract
 
-    
+
     A->>chess: Creates game
     A->>web: Initiate wager offer
     Note over A, web: - lichess user id <br /> - wager amount
