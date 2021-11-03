@@ -21,14 +21,17 @@ def test_happy_path(game_wager, alice, bob):
     wager_id = 1
     winner = alice
 
-    game_wager.createWager(wager_id, {"from": alice, "value": wager_amount})
+    tx1 = game_wager.createWager(wager_id, {"from": alice, "value": wager_amount})
     assert game_wager.balance() == "1 ether"
+    assert "WagerCreated" in tx1.events
 
-    game_wager.AcceptWager(wager_id, {"from": bob, "value": wager_amount})
+    tx2 = game_wager.AcceptWager(wager_id, {"from": bob, "value": wager_amount})
     assert game_wager.balance() == "2 ether"
+    assert "WagerAccepted" in tx2.events
 
     winner_balance = winner.balance()
-    game_wager.PayoutWager(wager_id, winner, {"from": bob})
+    tx3 = game_wager.PayoutWager(wager_id, winner, {"from": bob})
+    assert "WagerFinished" in tx3.events
 
     assert game_wager.balance() == "0 ether"
     assert winner_balance + "2 ether" == winner.balance()
